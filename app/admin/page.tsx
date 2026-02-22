@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type Category = { id: string; name: string; slug: string };
 type AvailableKey = { key: string; label: string };
@@ -20,6 +21,7 @@ export default function AdminPage() {
     const [isAuth, setIsAuth] = useState(false);
     const [code, setCode] = useState("");
     const [activeTab, setActiveTab] = useState<"tools" | "categories">("tools");
+    const router = useRouter();
 
     // Data states
     const [categories, setCategories] = useState<Category[]>([]);
@@ -108,6 +110,7 @@ export default function AdminPage() {
                 showMessage(`✅ Đã thêm danh mục "${catName}"!`, "success");
                 setCatName("");
                 fetchData();
+                router.refresh();
             } else {
                 showMessage(data.error || "Lỗi thêm danh mục!", "error");
             }
@@ -128,6 +131,7 @@ export default function AdminPage() {
             if (res.ok) {
                 showMessage(`Đã xóa danh mục "${name}"!`, "success");
                 fetchData();
+                router.refresh();
             } else {
                 showMessage(data.error || "Lỗi xóa!", "error");
             }
@@ -476,55 +480,54 @@ export default function AdminPage() {
                         </h3>
 
                         {/* Component key dropdown — only shows unused registry keys */}
-                        <div>
-                            <label className="block text-xs text-gray-500 mb-2">
+                        <div className="space-y-2">
+                            <label className="block text-xs text-gray-500">
                                 Component (từ Tool Registry) *
                             </label>
-                            <select
-                                className="admin-input w-full text-white"
-                                value={toolForm.componentKey}
-                                onChange={(e) => {
-                                    const selected = availableKeys.find(
-                                        (k) => k.key === e.target.value
-                                    );
-                                    if (selected) {
-                                        setToolForm({
-                                            ...toolForm,
-                                            componentKey: selected.key,
-                                            name: toolForm.name || selected.label,
-                                            slug: toolForm.slug || autoSlug(selected.label),
-                                        });
-                                    } else {
-                                        setToolForm({ ...toolForm, componentKey: e.target.value });
-                                    }
-                                }}
-                            >
-                                <option value="">-- Chọn component --</option>
-                                {availableKeys.map((k) => {
-                                    const isUsed = usedKeys.has(k.key);
-                                    return (
-                                        <option
-                                            key={k.key}
-                                            value={k.key}
-                                            disabled={isUsed}
-                                        >
-                                            {k.label} ({k.key}){isUsed ? " — đã sử dụng" : ""}
-                                        </option>
-                                    );
-                                })}
-                            </select>
-                            {unusedKeys.length === 0 && (
-                                <p className="text-xs text-yellow-400 mt-2">
-                                    ⚠️ Tất cả component đã được sử dụng. Thêm component mới vào{" "}
-                                    <code className="text-neon-blue">
-                                        components/tools/available-keys.ts
-                                    </code>{" "}
-                                    và{" "}
-                                    <code className="text-neon-blue">
-                                        components/tools/tool-registry.tsx
-                                    </code>
-                                </p>
-                            )}
+                            <div className="relative">
+                                <select
+                                    className={`admin-input w-full text-white ${unusedKeys.length === 0 ? "opacity-50 cursor-not-allowed border-yellow-500/50" : ""
+                                        }`}
+                                    value={toolForm.componentKey}
+                                    disabled={unusedKeys.length === 0}
+                                    onChange={(e) => {
+                                        const selected = availableKeys.find((k) => k.key === e.target.value);
+                                        if (selected) {
+                                            setToolForm({
+                                                ...toolForm,
+                                                componentKey: selected.key,
+                                                name: toolForm.name || selected.label,
+                                                slug: toolForm.slug || autoSlug(selected.label),
+                                            });
+                                        }
+                                    }}
+                                >
+                                    {unusedKeys.length === 0 ? (
+                                        <option value="">⚠️ ĐÃ HẾT COMPONENT TRỐNG</option>
+                                    ) : (
+                                        <>
+                                            <option value="">-- Chọn component --</option>
+                                            {availableKeys.map((k) => {
+                                                const isUsed = usedKeys.has(k.key);
+                                                return (
+                                                    <option key={k.key} value={k.key} disabled={isUsed}>
+                                                        {k.label} {isUsed ? "(Đã dùng)" : ""}
+                                                    </option>
+                                                );
+                                            })}
+                                        </>
+                                    )}
+                                </select>
+                            </div>
+
+                            {/* Vùng thông báo cố định để tránh dựt giao diện */}
+                            <div className="min-h-[20px]">
+                                {unusedKeys.length === 0 && (
+                                    <p className="text-[10px] text-yellow-400 animate-pulse">
+                                        * Tất cả component đã được dùng. Hãy thêm mới vào registry trước khi tiếp tục.
+                                    </p>
+                                )}
+                            </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
