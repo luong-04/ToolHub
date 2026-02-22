@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id    String @id @default(cuid())
+  name  String
+  slug  String @unique
+  tools Tool[]
+}
+
+model Tool {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  categoryId   String
+  category     Category @relation(fields: [categoryId], references: [id])
+  componentKey String   
+  description  String?
+  content      String   
+  isPublished  Boolean  @default(false)
+  publishAt    DateTime @default(now())
+  createdAt    DateTime @default(now())
+}
