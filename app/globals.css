@@ -72,6 +72,13 @@
     transform: translateY(-2px);
   }
 
+  /* Disable hover transform on touch devices to avoid sticky hover */
+  @media (hover: none) {
+    .glass-card:hover {
+      transform: none;
+    }
+  }
+
   .glass-card:hover::before {
     opacity: 1;
   }
@@ -195,5 +202,25 @@
 
   50% {
     background-position: 100% 50%;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
   }
 }

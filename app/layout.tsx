@@ -3,18 +3,24 @@ import Link from "next/link";
 import prisma from "@/lib/prisma";
 import type { Metadata } from "next";
 import ToolHubLogo from "@/components/ToolHubLogo";
+import MobileMenu from "@/components/MobileMenu";
+import SearchBar from "@/components/SearchBar";
 
 export const metadata: Metadata = {
   title: "ToolHub — Công Cụ Trực Tuyến Miễn Phí Cho Developer & SEO",
   description:
-    "ToolHub cung cấp bộ công cụ trực tuyến miễn phí: JSON Formatter, Password Generator, Base64, Minifier, SEO Checker và nhiều hơn nữa. Xử lý 100% tại trình duyệt, bảo mật tuyệt đối.",
+    "ToolHub cung cấp bộ công cụ trực tuyến miễn phí: JSON Formatter, Password Generator, Base64 Encoder, Meta Tag Checker và nhiều hơn nữa. Xử lý 100% tại trình duyệt, bảo mật tuyệt đối.",
   keywords: [
     "công cụ trực tuyến",
     "developer tools",
     "SEO tools",
     "JSON formatter",
     "password generator",
+    "base64 encoder",
+    "meta tag checker",
     "toolhub",
+    "công cụ miễn phí",
+    "công cụ online",
   ],
   openGraph: {
     title: "ToolHub — Công Cụ Trực Tuyến Miễn Phí",
@@ -22,7 +28,12 @@ export const metadata: Metadata = {
       "Bộ công cụ trực tuyến miễn phí cho Developer & SEO. Xử lý 100% tại trình duyệt.",
     type: "website",
     locale: "vi_VN",
+    siteName: "ToolHub",
+    url: "https://toolhub.vn",
   },
+  metadataBase: new URL("https://toolhub.vn"),
+  alternates: { canonical: "/" },
+  robots: { index: true, follow: true },
 };
 
 export default async function RootLayout({
@@ -57,9 +68,42 @@ export default async function RootLayout({
         />
       </head>
       <body className="flex min-h-screen flex-col bg-[var(--color-dark-bg)]">
+        {/* JSON-LD WebSite + Organization */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "ToolHub",
+              url: "https://toolhub.vn",
+              description: "Bộ công cụ trực tuyến miễn phí cho Developer & SEO",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: "https://toolhub.vn/?q={search_term_string}",
+                },
+                "query-input": "required name=search_term_string",
+              },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "ToolHub",
+              url: "https://toolhub.vn",
+              description: "Công cụ trực tuyến miễn phí cho Developer & SEO",
+            }),
+          }}
+        />
         {/* ═══════════════════ HEADER ═══════════════════ */}
         <header className="sticky top-0 z-50 border-b border-white/5 bg-[var(--color-dark-bg)]/80 backdrop-blur-xl">
-          <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+          <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 shrink-0">
               <ToolHubLogo size="sm" />
@@ -90,7 +134,7 @@ export default async function RootLayout({
                   </Link>
                   {/* Dropdown */}
                   <div className="absolute left-0 top-full pt-1 hidden group-hover:block z-50">
-                    <div className="w-64 rounded-2xl border border-white/10 bg-[#0c0c10]/95 backdrop-blur-xl p-3 shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
+                    <div className="w-64 rounded-2xl border border-[#1a2535] bg-[#0d1520] p-3 shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
                       <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-3 py-2">
                         {cat.name}
                       </div>
@@ -130,25 +174,24 @@ export default async function RootLayout({
               ))}
             </nav>
 
-            {/* Mobile menu button */}
-            <button className="md:hidden text-gray-400 hover:text-neon-blue transition-colors p-2">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
+            {/* Search + Mobile menu */}
+            <div className="flex items-center gap-1">
+              <SearchBar />
+              <MobileMenu categories={sortedCategories.map(c => ({ id: c.id, name: c.name, slug: c.slug, tools: c.tools.map(t => ({ id: t.id, name: t.name, slug: t.slug })) }))} />
+            </div>
           </div>
         </header>
 
         {/* ═══════════════════ MAIN ═══════════════════ */}
-        <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12">
+        <main className="mx-auto w-full max-w-7xl flex-1 px-4 sm:px-6 py-8 sm:py-12">
           {children}
         </main>
 
         {/* ═══════════════════ FOOTER ═══════════════════ */}
         <footer className="mt-20 border-t border-white/5 bg-[#08080c]">
           {/* Top footer — Logo + Categories with tools */}
-          <div className="mx-auto max-w-7xl px-6 py-14">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 sm:py-14">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12">
               {/* Brand column */}
               <div className="space-y-5 md:col-span-1">
                 <ToolHubLogo size="sm" />
@@ -250,7 +293,7 @@ export default async function RootLayout({
 
           {/* Bottom footer */}
           <div className="border-t border-white/5">
-            <div className="mx-auto max-w-7xl px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-600">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 py-5 sm:py-6 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 text-xs text-gray-600">
               <p>© {new Date().getFullYear()} ToolHub. All rights reserved.</p>
               <p className="text-center">
                 Built with ❤️ for Developers & SEO Specialists
@@ -259,6 +302,9 @@ export default async function RootLayout({
                 {/* Thay đổi tại đây */}
                 <Link href="/about" className="hover:text-neon-blue cursor-pointer transition-colors">
                   Về chúng tôi
+                </Link>
+                <Link href="/contact" className="hover:text-neon-blue cursor-pointer transition-colors">
+                  Liên hệ
                 </Link>
               </div>
             </div>
