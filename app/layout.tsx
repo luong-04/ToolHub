@@ -256,12 +256,10 @@ export default async function RootLayout({
                 Built with ❤️ for Developers & SEO Specialists
               </p>
               <div className="flex gap-6">
-                <span className="hover:text-gray-400 cursor-pointer transition-colors">
-                  Chính sách bảo mật
-                </span>
-                <span className="hover:text-gray-400 cursor-pointer transition-colors">
-                  Điều khoản sử dụng
-                </span>
+                {/* Thay đổi tại đây */}
+                <Link href="/about" className="hover:text-neon-blue cursor-pointer transition-colors">
+                  Về chúng tôi
+                </Link>
               </div>
             </div>
           </div>
