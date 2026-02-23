@@ -1,0 +1,15 @@
+{
+    "Header": {
+        "tools": "All Tools",
+        "about": "About Us"
+    },
+    "HomePage": {
+        "title": "Free Online Tools for Developers & SEO",
+        "description": "ToolHub provides a suite of free, client-side processed online tools to optimize your workflow.",
+        "explore": "Explore Tools"
+    },
+    "Footer": {
+        "rights": "All rights reserved.",
+        "madeWith": "Built with ❤️ for Developers & SEO Specialists"
+    }
+}

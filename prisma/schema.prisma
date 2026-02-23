@@ -1,3 +1,5 @@
+// prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,22 +10,36 @@ datasource db {
 }
 
 model Category {
-  id    String @id @default(cuid())
-  name  String
-  slug  String @unique
-  tools Tool[]
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  tools     Tool[]
 }
 
 model Tool {
   id           String   @id @default(cuid())
-  name         String
   slug         String   @unique
+  componentKey String
+  isPublished  Boolean  @default(false)
   categoryId   String
   category     Category @relation(fields: [categoryId], references: [id])
-  componentKey String   
-  description  String?
-  content      String   
-  isPublished  Boolean  @default(false)
-  publishAt    DateTime @default(now())
   createdAt    DateTime @default(now())
+  
+  // Liên kết 1-Nhiều với bảng Dịch thuật
+  translations ToolTranslation[]
+}
+
+// Bảng lưu trữ Dữ liệu Đa ngôn ngữ cho từng Tool
+model ToolTranslation {
+  id          String  @id @default(cuid())
+  toolId      String
+  language    String  // Chứa mã: en, vi, ja, ko, id, es, pt, de, fr, hi
+  name        String
+  description String?
+  content     String?
+
+  tool Tool @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  
+  @@unique([toolId, language]) // Mỗi tool chỉ có 1 bản dịch cho 1 ngôn ngữ
 }

@@ -1,0 +1,15 @@
+{
+    "Header": {
+        "tools": "Tất cả công cụ",
+        "about": "Về chúng tôi"
+    },
+    "HomePage": {
+        "title": "Công Cụ Trực Tuyến Miễn Phí Cho Developer & SEO",
+        "description": "ToolHub cung cấp bộ công cụ trực tuyến miễn phí, xử lý 100% tại trình duyệt giúp tối ưu quy trình làm việc.",
+        "explore": "Khám phá công cụ"
+    },
+    "Footer": {
+        "rights": "Đã đăng ký bản quyền.",
+        "madeWith": "Được xây dựng với ❤️ dành cho Developer & SEO"
+    }
+}
