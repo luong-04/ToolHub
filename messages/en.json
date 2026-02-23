@@ -1,15 +1,36 @@
 {
-    "Header": {
-        "tools": "All Tools",
-        "about": "About Us"
-    },
     "HomePage": {
-        "title": "Free Online Tools for Developers & SEO",
-        "description": "ToolHub provides a suite of free, client-side processed online tools to optimize your workflow.",
-        "explore": "Explore Tools"
-    },
-    "Footer": {
-        "rights": "All rights reserved.",
-        "madeWith": "Built with ❤️ for Developers & SEO Specialists"
+        "badge": "100% Client-side Processing · Free · Online",
+        "hero_title_1": "Collection of ",
+        "hero_title_2": "Online Tools",
+        "hero_title_3": "for ",
+        "hero_desc": "ToolHub is the leading platform providing the most powerful free online tools today. Everything is processed 100% locally in your browser — zero latency and absolute security.",
+        "btn_explore": "🚀 Explore tools now",
+        "btn_more": "Learn more ↓",
+        "stat_free": "Free",
+        "stat_free_sub": "Lifetime Access",
+        "stat_fast": "Super Fast",
+        "stat_fast_sub": "Zero Latency",
+        "stat_secure": "Secure",
+        "stat_secure_sub": "Local Processing",
+        "new_tools": "Newest Tools",
+        "badge_new": "NEW",
+        "use_now": "Use Now",
+        "open_tool": "Open Tool",
+        "about_badge": "Introduction",
+        "about_title": "Why is ToolHub the #1 choice for SEO & Dev?",
+        "about_p1": "ToolHub is proud to be the leading free online tool ecosystem, designed specifically for Developers, SEO Experts, and Webmasters.",
+        "about_p2": "Data processing happens 100% in your local browser. We do not store, collect, or send your data to any server.",
+        "about_p3": "Our collection includes essential Developer Tools, Security Tools, and SEO Tools.",
+        "about_p4": "Built on Next.js 14, ToolHub provides Zero-Latency speed and perfect compatibility on all devices.",
+        "feature_1": "Super Fast",
+        "feature_1_sub": "Instant processing",
+        "feature_2": "Secure",
+        "feature_2_sub": "100% client-side",
+        "feature_3": "Free",
+        "feature_3_sub": "Unlimited",
+        "feature_4": "Responsive",
+        "feature_4_sub": "All devices",
+        "tool_default_desc": "Smart, fast, and secure data processing tool."
     }
 }

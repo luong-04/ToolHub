@@ -10,13 +10,24 @@ datasource db {
 }
 
 model Category {
-  id        String   @id @default(cuid())
-  name      String
-  slug      String   @unique
-  createdAt DateTime @default(now())
-  tools     Tool[]
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  createdAt    DateTime @default(now())
+  tools        Tool[]
+  
+  // Quan hệ 1-Nhiều với bảng dịch thuật danh mục
+  translations CategoryTranslation[]
 }
 
+model CategoryTranslation {
+  id         String   @id @default(cuid())
+  categoryId String
+  language   String   // vi, en, ja, ko, id, es, pt, de, fr, hi
+  name       String   // Tên danh mục sau khi dịch
+  
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  @@unique([categoryId, language])
+}
 model Tool {
   id           String   @id @default(cuid())
   slug         String   @unique

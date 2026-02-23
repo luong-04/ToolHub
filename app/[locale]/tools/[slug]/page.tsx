@@ -1,4 +1,3 @@
-// app/[locale]/tools/[slug]/page.tsx
 import { ToolRegistry } from '@/components/tools/tool-registry';
 import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
@@ -9,7 +8,7 @@ type Props = {
     params: Promise<{ locale: string; slug: string }>;
 };
 
-// Dynamic metadata for SEO
+// Khai báo thẻ Hreflang 10 ngôn ngữ chuẩn SEO Google cho Từng Công Cụ
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { locale, slug } = await params;
 
@@ -17,7 +16,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         where: { slug },
         include: {
             category: true,
-            // Lấy bản dịch của ngôn ngữ hiện tại HOẶC tiếng Anh (dự phòng)
             translations: {
                 where: { language: { in: [locale, 'en'] } }
             }
@@ -26,11 +24,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     if (!tool || tool.translations.length === 0) return { title: 'Công cụ không tồn tại — ToolHub' };
 
-    // Ưu tiên bản dịch theo locale, nếu không có thì dùng tiếng Anh
     const translation = tool.translations.find(t => t.language === locale) || tool.translations.find(t => t.language === 'en') || tool.translations[0];
 
     const title = `${translation.name} — Công Cụ Trực Tuyến Miễn Phí | ToolHub`;
     const description = translation.description || `${translation.name} — công cụ trực tuyến miễn phí, xử lý 100% tại trình duyệt. An toàn, nhanh chóng, không cần đăng ký.`;
+    const baseUrl = "https://toolhub.vn";
 
     return {
         title,
@@ -41,11 +39,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             description,
             type: 'website',
             locale: locale,
-            url: `https://toolhub.vn/${locale}/tools/${tool.slug}`,
+            url: `${baseUrl}/${locale}/tools/${tool.slug}`,
             siteName: 'ToolHub',
         },
+        // CHUỖI 10 NGÔN NGỮ ĐẦY ĐỦ KHÔNG RÚT GỌN CHO BÀI VIẾT
         alternates: {
-            canonical: `/${locale}/tools/${tool.slug}`,
+            canonical: `${baseUrl}/${locale}/tools/${tool.slug}`,
+            languages: {
+                'en': `${baseUrl}/en/tools/${tool.slug}`,
+                'vi': `${baseUrl}/vi/tools/${tool.slug}`,
+                'ja': `${baseUrl}/ja/tools/${tool.slug}`,
+                'ko': `${baseUrl}/ko/tools/${tool.slug}`,
+                'id': `${baseUrl}/id/tools/${tool.slug}`,
+                'es': `${baseUrl}/es/tools/${tool.slug}`,
+                'pt': `${baseUrl}/pt/tools/${tool.slug}`,
+                'de': `${baseUrl}/de/tools/${tool.slug}`,
+                'fr': `${baseUrl}/fr/tools/${tool.slug}`,
+                'hi': `${baseUrl}/hi/tools/${tool.slug}`,
+                'x-default': `${baseUrl}/en/tools/${tool.slug}`
+            }
         },
     };
 }
@@ -67,11 +79,10 @@ export default async function ToolPage({ params }: Props) {
         return notFound();
     }
 
-    // Ưu tiên bản dịch theo locale, nếu không có thì dùng tiếng Anh
     const translation = toolData.translations.find(t => t.language === locale) || toolData.translations.find(t => t.language === 'en') || toolData.translations[0];
     const SelectedTool = ToolRegistry[toolData.componentKey];
 
-    // Fetch related tools & suggested tools kèm theo bản dịch
+    // Lấy công cụ liên quan và công cụ đề xuất kèm bản dịch
     const [relatedToolsRaw, suggestedToolsRaw] = await Promise.all([
         prisma.tool.findMany({
             where: {
@@ -94,7 +105,6 @@ export default async function ToolPage({ params }: Props) {
         })
     ]);
 
-    // Hàm format lại mảng tool dự phòng ngôn ngữ
     const mapTools = (tools: any[]) => tools.map(t => {
         const trans = t.translations.find((tr: any) => tr.language === locale) || t.translations.find((tr: any) => tr.language === 'en') || t.translations[0];
         return {
@@ -107,7 +117,7 @@ export default async function ToolPage({ params }: Props) {
     const relatedTools = mapTools(relatedToolsRaw);
     const suggestedTools = mapTools(suggestedToolsRaw);
 
-    // JSON-LD Schema
+    // Schema cho Google (Dữ liệu cấu trúc)
     const jsonLd = {
         '@context': 'https://schema.org',
         '@type': 'SoftwareApplication',
@@ -127,7 +137,6 @@ export default async function ToolPage({ params }: Props) {
         },
     };
 
-    // BreadcrumbList schema
     const breadcrumbLd = {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
@@ -140,7 +149,6 @@ export default async function ToolPage({ params }: Props) {
 
     return (
         <>
-            {/* JSON-LD Structured Data */}
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -160,7 +168,7 @@ export default async function ToolPage({ params }: Props) {
                     <span className="text-gray-400">{translation.name}</span>
                 </nav>
 
-                {/* Tool Title — H1 */}
+                {/* Tiêu đề Tool */}
                 <div className="space-y-2">
                     <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 uppercase italic">
                         {translation.name}
@@ -171,21 +179,20 @@ export default async function ToolPage({ params }: Props) {
                     )}
                 </div>
 
-                {/* Tool Component */}
+                {/* Giao diện Tool */}
                 <section className="bg-[#0a0a0a] border border-cyan-500/20 shadow-[0_0_30px_rgba(6,182,212,0.05)] rounded-2xl sm:rounded-[3rem] p-4 sm:p-6 md:p-10">
                     {SelectedTool ? <SelectedTool /> : <p className="text-cyan-500 animate-pulse">Loading tool...</p>}
                 </section>
 
-                {/* SEO Article Content */}
+                {/* Bài viết SEO Đa ngôn ngữ */}
                 {translation.content && (
                     <article className="bg-[#111] border border-white/5 rounded-2xl sm:rounded-[3rem] p-5 sm:p-8 md:p-12 prose prose-invert max-w-none prose-sm sm:prose-base prose-headings:text-white prose-headings:font-bold prose-h2:text-xl prose-h2:sm:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3 prose-p:text-gray-400 prose-p:leading-relaxed prose-li:text-gray-400 prose-strong:text-neon-blue prose-a:text-neon-blue prose-a:no-underline hover:prose-a:underline">
                         <div dangerouslySetInnerHTML={{ __html: translation.content }} />
                     </article>
                 )}
 
-                {/* Internal Linking: Related Tools & Suggested Tools */}
+                {/* Liên kết nội bộ */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-white/5">
-                    {/* Công cụ liên quan */}
                     {relatedTools.length > 0 && (
                         <div className="space-y-4">
                             <h3 className="text-lg font-bold text-white flex items-center gap-2">
@@ -208,7 +215,6 @@ export default async function ToolPage({ params }: Props) {
                         </div>
                     )}
 
-                    {/* Công cụ đề xuất */}
                     {suggestedTools.length > 0 && (
                         <div className="space-y-4">
                             <h3 className="text-lg font-bold text-white flex items-center gap-2">

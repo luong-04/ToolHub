@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+// 1. Đổi sang Link của hệ thống đa ngôn ngữ
+import { Link } from "@/i18n/routing";
+import { useParams } from "next/navigation";
 
 type SearchResult = {
     name: string;
@@ -19,6 +21,10 @@ export default function SearchBar() {
     const wrapperRef = useRef<HTMLDivElement>(null);
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+    // 2. Lấy ngôn ngữ hiện tại từ URL
+    const params = useParams();
+    const locale = (params.locale as string) || "en";
+
     // Fetch results with debounce
     useEffect(() => {
         if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -32,7 +38,9 @@ export default function SearchBar() {
         setLoading(true);
         debounceRef.current = setTimeout(async () => {
             try {
-                const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                // 3. Truyền locale vào API
+                const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&locale=${locale}`);
+                if (!res.ok) throw new Error("API Error");
                 const data = await res.json();
                 setResults(data);
                 setIsOpen(true);
@@ -45,7 +53,7 @@ export default function SearchBar() {
         return () => {
             if (debounceRef.current) clearTimeout(debounceRef.current);
         };
-    }, [query]);
+    }, [query, locale]);
 
     // Close dropdown on outside click
     useEffect(() => {
@@ -67,8 +75,9 @@ export default function SearchBar() {
         }
     }, [showInput]);
 
-    // Highlight matching text
-    const highlight = (text: string) => {
+    // Highlight matching text (Đã fix lỗi crash nếu text bị null/undefined)
+    const highlight = (text: string | null) => {
+        if (!text) return "";
         if (!query.trim()) return text;
         const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
         const parts = text.split(regex);
@@ -83,7 +92,7 @@ export default function SearchBar() {
 
     return (
         <div ref={wrapperRef} className="relative">
-            {/* Search icon button (mobile + desktop) */}
+            {/* Search icon button */}
             {!showInput && (
                 <button
                     onClick={() => setShowInput(true)}

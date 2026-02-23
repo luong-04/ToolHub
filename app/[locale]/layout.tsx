@@ -1,4 +1,4 @@
-import "../globals.css";
+import "@/app/globals.css";
 // Thay thế import Link cũ bằng Link của next-intl hỗ trợ i18n
 import { Link } from "@/i18n/routing";
 import { NextIntlClientProvider } from "next-intl";
@@ -10,6 +10,7 @@ import ToolHubLogo from "@/components/ToolHubLogo";
 import MobileMenu from "@/components/MobileMenu";
 import SearchBar from "@/components/SearchBar";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { getTranslations } from "next-intl/server";
 
 // Chuyển sang generateMetadata để SEO tốt hơn với nhiều ngôn ngữ
 export async function generateMetadata({
@@ -19,23 +20,39 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
 
+  // Dùng file JSON để tự động dịch Tiêu đề Meta SEO
+  const t = await getTranslations({ locale, namespace: "HomePage" });
+  const baseUrl = "https://toolhub.vn";
+
   return {
-    title: "ToolHub — Công Cụ Trực Tuyến Miễn Phí Cho Developer & SEO",
-    description:
-      "ToolHub cung cấp bộ công cụ trực tuyến miễn phí: JSON Formatter, Password Generator, Base64 Encoder, Meta Tag Checker và nhiều hơn nữa. Xử lý 100% tại trình duyệt, bảo mật tuyệt đối.",
-    keywords: [
-      "công cụ trực tuyến", "developer tools", "SEO tools", "JSON formatter",
-      "password generator", "base64 encoder", "meta tag checker", "toolhub",
-    ],
-    openGraph: {
-      title: "ToolHub — Công Cụ Trực Tuyến Miễn Phí",
-      description: "Bộ công cụ trực tuyến miễn phí cho Developer & SEO. Xử lý 100% tại trình duyệt.",
-      type: "website",
-      locale: locale === "vi" ? "vi_VN" : locale === "en" ? "en_US" : locale,
-      siteName: "ToolHub",
-      url: "https://toolhub.vn",
+    title: t('hero_title_1') + t('hero_title_2') + " | ToolHub",
+    description: t('hero_desc'),
+    // THẺ HREFLANG CHUẨN SEO 10 NGÔN NGỮ
+    alternates: {
+      canonical: `${baseUrl}/${locale}`,
+      languages: {
+        'en': `${baseUrl}/en`,
+        'vi': `${baseUrl}/vi`,
+        'ja': `${baseUrl}/ja`,
+        'ko': `${baseUrl}/ko`,
+        'id': `${baseUrl}/id`,
+        'es': `${baseUrl}/es`,
+        'pt': `${baseUrl}/pt`,
+        'de': `${baseUrl}/de`,
+        'fr': `${baseUrl}/fr`,
+        'hi': `${baseUrl}/hi`,
+        'x-default': `${baseUrl}/en` // Mặc định nếu Google không biết IP ở đâu
+      },
     },
-    metadataBase: new URL("https://toolhub.vn"),
+    openGraph: {
+      title: "ToolHub",
+      description: t('hero_desc'),
+      type: "website",
+      locale: locale,
+      url: `${baseUrl}/${locale}`,
+      siteName: "ToolHub",
+    },
+    metadataBase: new URL(baseUrl),
   };
 }
 
@@ -108,27 +125,24 @@ export default async function RootLayout({
 
           {/* ═══════════════════ HEADER ═══════════════════ */}
           <header className="sticky top-0 z-50 border-b border-white/5 bg-[var(--color-dark-bg)]/80 backdrop-blur-xl">
-            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-              {/* Logo */}
-              <div className="flex items-center gap-4 sm:gap-8 shrink-0">
+            {/* Thêm relative để làm gốc căn giữa tuyệt đối cho Danh mục */}
+            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 relative">
+
+              {/* 1. TRÁI: Logo */}
+              <div className="flex items-center shrink-0 z-20">
                 <Link href="/" className="flex items-center gap-2">
                   <ToolHubLogo size="sm" />
                 </Link>
               </div>
 
-              <div className="flex items-center justify-end flex-1 gap-2 sm:gap-6">
-                {/* Search Bar */}
-                <div className="flex-1 max-w-md hidden md:block">
-                  <SearchBar />
-                </div>
-
-                {/* Nav — category dropdowns */}
-                <nav className="hidden lg:flex items-center gap-1">
+              {/* 2. GIỮA: Danh mục (Căn giữa tuyệt đối, ẩn trên mobile) */}
+              <nav className="hidden lg:flex items-center justify-center absolute left-1/2 -translate-x-1/2 w-full max-w-3xl pointer-events-none z-10">
+                <div className="pointer-events-auto flex items-center gap-2">
                   {sortedCategories.map((cat) => (
                     <div key={cat.id} className="group relative">
                       <Link
                         href={`/category/${cat.slug}`}
-                        className="flex items-center gap-1.5 px-3 py-5 text-xs font-semibold uppercase tracking-widest text-gray-400 hover:text-neon-blue transition-colors duration-300"
+                        className="flex items-center gap-1.5 px-4 py-5 text-xs font-semibold uppercase tracking-widest text-gray-400 hover:text-neon-blue transition-colors duration-300"
                       >
                         {cat.name}
                         <svg className="w-3 h-3 opacity-40 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -136,7 +150,7 @@ export default async function RootLayout({
                         </svg>
                       </Link>
                       {/* Dropdown */}
-                      <div className="absolute left-0 top-full pt-1 hidden group-hover:block z-50">
+                      <div className="absolute left-1/2 -translate-x-1/2 top-full pt-1 hidden group-hover:block z-50">
                         <div className="w-64 rounded-2xl border border-white/10 bg-[#0c0c10]/95 backdrop-blur-xl p-3 shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
                           <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-3 py-2">
                             {cat.name}
@@ -165,15 +179,16 @@ export default async function RootLayout({
                       </div>
                     </div>
                   ))}
-                </nav>
-
-                <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-                  {/* --- NÚT ĐỔI NGÔN NGỮ ĐƯỢC THÊM VÀO ĐÂY --- */}
-                  <LanguageSwitcher />
-
-                  <MobileMenu categories={sortedCategories} />
                 </div>
+              </nav>
+
+              {/* 3. PHẢI: Search + Đổi ngôn ngữ + Menu Mobile */}
+              <div className="flex items-center justify-end gap-2 sm:gap-3 shrink-0 z-20">
+                <SearchBar />
+                <LanguageSwitcher />
+                <MobileMenu categories={sortedCategories} />
               </div>
+
             </div>
           </header>
 

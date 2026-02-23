@@ -1,17 +1,47 @@
 import prisma from "@/lib/prisma";
-import Link from "next/link";
+// Đổi Link sang i18n để giữ đúng ngôn ngữ trên URL
+import { Link } from "@/i18n/routing";
 
-export default async function HomePage() {
-    // Get all categories with published tools, sorted by newest tool
-    const categories = await prisma.category.findMany({
+type Props = {
+    params: Promise<{ locale: string }>;
+};
+
+export default async function HomePage({ params }: Props) {
+    const { locale } = await params;
+
+    // 1. Lấy tất cả category và tools KÈM THEO bản dịch (translations)
+    const rawCategories = await prisma.category.findMany({
         include: {
             tools: {
                 where: { isPublished: true },
                 orderBy: { createdAt: "desc" },
+                include: {
+                    translations: {
+                        where: { language: { in: [locale, "en"] } }
+                    }
+                }
             },
         },
     });
 
+    // 2. Format dữ liệu: Lấy name và description từ bản dịch lồng ra ngoài
+    const categories = rawCategories.map((cat) => ({
+        ...cat,
+        tools: cat.tools.map((tool) => {
+            const trans =
+                tool.translations.find((t) => t.language === locale) ||
+                tool.translations.find((t) => t.language === "en") ||
+                tool.translations[0];
+
+            return {
+                ...tool,
+                name: trans?.name || tool.componentKey,
+                description: trans?.description || ""
+            };
+        }),
+    }));
+
+    // 3. Lọc và sắp xếp category
     const sortedCategories = [...categories]
         .filter((c) => c.tools.length > 0)
         .sort((a, b) => {
@@ -20,7 +50,7 @@ export default async function HomePage() {
             return bNewest - aNewest;
         });
 
-    // All tools flat, newest first
+    // 4. Lấy danh sách "Công cụ mới nhất"
     const allToolsNewest = sortedCategories
         .flatMap((c) => c.tools.map((t) => ({ ...t, categoryName: c.name, categorySlug: c.slug })))
         .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());

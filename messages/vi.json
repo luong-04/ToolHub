@@ -1,15 +1,36 @@
 {
-    "Header": {
-        "tools": "Tất cả công cụ",
-        "about": "Về chúng tôi"
-    },
     "HomePage": {
-        "title": "Công Cụ Trực Tuyến Miễn Phí Cho Developer & SEO",
-        "description": "ToolHub cung cấp bộ công cụ trực tuyến miễn phí, xử lý 100% tại trình duyệt giúp tối ưu quy trình làm việc.",
-        "explore": "Khám phá công cụ"
-    },
-    "Footer": {
-        "rights": "Đã đăng ký bản quyền.",
-        "madeWith": "Được xây dựng với ❤️ dành cho Developer & SEO"
+        "badge": "100% Client-side Processing · Miễn phí · Trực tuyến",
+        "hero_title_1": "Tổng hợp ",
+        "hero_title_2": "Công cụ trực tuyến",
+        "hero_title_3": "cho ",
+        "hero_desc": "ToolHub là nền tảng cung cấp bộ công cụ trực tuyến miễn phí mạnh mẽ nhất hiện nay. Mọi thứ được xử lý 100% tại trình duyệt của bạn — tốc độ siêu thực và bảo mật tuyệt đối.",
+        "btn_explore": "🚀 Khám phá công cụ ngay",
+        "btn_more": "Tìm hiểu thêm ↓",
+        "stat_free": "Miễn phí",
+        "stat_free_sub": "Truy cập trọn đời",
+        "stat_fast": "Siêu nhanh",
+        "stat_fast_sub": "Zero Latency",
+        "stat_secure": "Bảo mật",
+        "stat_secure_sub": "Local Processing",
+        "new_tools": "Công cụ mới nhất",
+        "badge_new": "Mới",
+        "use_now": "Sử dụng ngay",
+        "open_tool": "Mở công cụ",
+        "about_badge": "Giới thiệu",
+        "about_title": "Tại sao ToolHub là lựa chọn số 1 cho SEO & Dev?",
+        "about_p1": "ToolHub tự hào là hệ sinh thái công cụ trực tuyến miễn phí hàng đầu, được thiết kế chuyên biệt cho Lập trình viên và Chuyên gia SEO.",
+        "about_p2": "Mọi thao tác xử lý dữ liệu diễn ra 100% tại trình duyệt local của bạn. Chúng tôi hoàn toàn không lưu trữ hay thu thập dữ liệu.",
+        "about_p3": "Bộ sưu tập bao gồm các Developer Tools thiết yếu, Security Tools và SEO Tools chuyên sâu.",
+        "about_p4": "Được xây dựng trên Next.js 14, ToolHub cung cấp tốc độ Zero-Latency và tương thích hoàn hảo mọi thiết bị.",
+        "feature_1": "Siêu nhanh",
+        "feature_1_sub": "Xử lý tức thì",
+        "feature_2": "Bảo mật",
+        "feature_2_sub": "100% client-side",
+        "feature_3": "Miễn phí",
+        "feature_3_sub": "Không giới hạn",
+        "feature_4": "Responsive",
+        "feature_4_sub": "Mọi thiết bị",
+        "tool_default_desc": "Công cụ xử lý dữ liệu thông minh và bảo mật."
     }
 }
